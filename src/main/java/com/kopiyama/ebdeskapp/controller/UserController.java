@@ -6,6 +6,7 @@ import com.kopiyama.ebdeskapp.repository.UserRepository;
 import com.kopiyama.ebdeskapp.exception.ExceptionThrowError;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -68,8 +69,17 @@ public class UserController {
 
     @GetMapping("/resource")
     @PreAuthorize("isAuthenticated()") // Ensure the user is authenticated
-    public ResponseEntity<String> getProtectedResource() {
-        return ResponseEntity.ok("Access to protected resource successful!");
-    }
+    public ResponseEntity<String> getProtectedResource(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication is required");
+        }
 
+        String username = authentication.getName();  // Sekarang ini aman karena kita sudah cek null
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            return ResponseEntity.ok(user.getEmail());  // Mengembalikan email pengguna
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+    }
 }
