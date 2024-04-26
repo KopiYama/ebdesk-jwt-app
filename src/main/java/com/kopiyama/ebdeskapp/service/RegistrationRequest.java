@@ -1,5 +1,6 @@
 package com.kopiyama.ebdeskapp.service;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -12,5 +13,6 @@ public class RegistrationRequest {
     private String password;
 
     @NotBlank(message = "Email is empty")
+    @Email(message = "Email must be a valid email address")
     private String email;
 }

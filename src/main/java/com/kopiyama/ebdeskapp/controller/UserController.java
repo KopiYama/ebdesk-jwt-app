@@ -29,6 +29,10 @@ public class UserController {
             return ResponseEntity.badRequest().body(bindingResult.getFieldError().getDefaultMessage());
         }
 
+        if (userRepository.findByUsername(registrationRequest.getUsername()) != null) {
+            return ResponseEntity.badRequest().body("Username already exists");
+        }
+
         User user = new User();
         user.setUsername(registrationRequest.getUsername());
         user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
