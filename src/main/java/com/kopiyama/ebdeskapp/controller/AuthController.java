@@ -1,6 +1,7 @@
 package com.kopiyama.ebdeskapp.controller;
 
 import com.kopiyama.ebdeskapp.config.JwtTokenProvider;
+import com.kopiyama.ebdeskapp.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,24 +23,12 @@ public class AuthController {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
-    public static class AuthRequest {
-        public String username;
-        public String password;
-    }
-
-    public static class AuthResponse {
-        public String token;
-        public AuthResponse(String token) {
-            this.token = token;
-        }
-    }
-
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody AuthRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@RequestBody AuthService.AuthRequest loginRequest) {
         try {
             // Create an authentication token
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    loginRequest.username, loginRequest.password);
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
 
             // Authenticate user
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -51,7 +40,7 @@ public class AuthController {
             String jwt = tokenProvider.generateToken(authentication.getName()); // Ensure this call matches your JwtTokenProvider
 
             // Return the token
-            return ResponseEntity.ok(new AuthResponse(jwt));
+            return ResponseEntity.ok(new AuthService.AuthResponse(jwt));
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body("Authentication failed: " + ex.getMessage());
         }
