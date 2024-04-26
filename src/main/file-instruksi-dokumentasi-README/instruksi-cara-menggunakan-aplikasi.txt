@@ -1,0 +1,61 @@
+## Cara Menjalankan
+
+### Menjalankan Aplikasi
+1. Pastikan MySQL sedang berjalan.
+2. Buka aplikasi di IDE Anda. Kemudian klik `aplikasi.properti`. Masukkan konfigurasi ini:
+   
+    spring.datasource.url=jdbc:mysql://localhost:3306/"masukkan_nama_database_Anda"
+    spring.datasource.namapengguna="masukkan_nama_database_anda"
+    spring.datasource.password="masukkan_kata sandi_database_Anda"
+    spring.jpa.hibernate.ddl-auto=perbarui
+    app.jwtSecret=v7Kq4CdIzlUcvOG9zLO30+g3y2et9kF/IP3RM4kz9y3IvP2z0sa4t6FornIe9hX62Hwz/HTJz+RKvMSjbkTT7w==
+    app.jwtExpirationMs=86400000
+   
+  
+    Catatan : Masukkan nama database Anda, nama pengguna database, kata sandi database.
+
+3. Menjalankan aplikasi
+   - Buka terminal atau command prompt
+   - Jalankan perintah berikut untuk memulai aplikasi:
+    
+     mvn spring-boot:jalankan
+   
+   
+     Tunggu hingga aplikasi sepenuhnya berjalan dan mendengarkan pada port default (biasanya port 8080)
+
+### Menguji dengan Tukang Pos
+1. Buka Tukang Pos dan buat permintaan baru.
+     - setel metode ke `POST`
+     - Masukkan URL titik akhir pendaftaran:
+    
+     http://localhost:8080/api/v1/auth/registration
+   
+   
+     - Pada tab Body, pilih raw dan format JSON seperti ini:
+    
+     {
+     "nama pengguna": "pengguna baru",
+     "kata sandi": "kata sandi123",
+     "email" : "email123@example.com
+     }
+   
+     - Klik Kirim dan perhatikan responnya. Anda akan menerima konfirmasi bahwa pengguna telah terdaftar
+
+2. Masuk untuk Mendapatkan Token JWT.
+    - Ubah metodenya menjadi POST.
+    - Gunakan URL masuk: `http://localhost:8080/api/v1/auth/login`.
+    - Di Badan, masukkan:
+ 
+     {
+     "nama pengguna": "pengguna baru",
+     "kata sandi": "kata sandi123"
+     }
+ 
+    - Klik Kirim.
+    - Salin token JWT dari respons yang diberikan
+
+3. Akses Sumber Daya yang Dilindungi.
+    - Buat permintaan baru menggunakan metode GET
+    - Masukkan URL untuk sumber daya yang dilindungi: `http://localhost:8080/api/v1/auth/resource`
+    - Pada tab Headers, masukkan Authorization pada kolom key dan masukkan Bearer <token> pada kolom value, ganti <token> dengan token JWT yang Anda dapatkan dari langkah login.
+    - Klik Kirim dan perhatikan responnya. Jika token tersebut valid, Anda akan mendapatkan akses ke sumber daya yang dilindungi.
