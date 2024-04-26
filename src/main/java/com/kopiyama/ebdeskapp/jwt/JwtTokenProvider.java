@@ -1,4 +1,4 @@
-package com.kopiyama.ebdeskapp.config;
+package com.kopiyama.ebdeskapp.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

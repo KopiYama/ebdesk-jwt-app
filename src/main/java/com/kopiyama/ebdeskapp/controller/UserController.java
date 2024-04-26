@@ -1,10 +1,9 @@
 package com.kopiyama.ebdeskapp.controller;
 
-import com.kopiyama.ebdeskapp.config.JwtTokenProvider;
+import com.kopiyama.ebdeskapp.jwt.JwtTokenProvider;
 import com.kopiyama.ebdeskapp.model.User;
 import com.kopiyama.ebdeskapp.repository.UserRepository;
-import com.kopiyama.ebdeskapp.repository.AuthRepository;
-import com.kopiyama.ebdeskapp.service.RegistrationRequest;
+import com.kopiyama.ebdeskapp.data.AuthData;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +36,7 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody AuthRepository.AuthRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@RequestBody AuthData.AuthRequest loginRequest) {
         try {
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
@@ -45,14 +44,14 @@ public class UserController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.generateToken(authentication.getName());
 
-            return ResponseEntity.ok(new AuthRepository.AuthResponse(jwt));
+            return ResponseEntity.ok(new AuthData.AuthResponse(jwt));
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body("Username or password is incorrect");
         }
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid RegistrationRequest registrationRequest, BindingResult bindingResult) {
+    public ResponseEntity<?> registerUser(@RequestBody @Valid AuthData.AuthRequest registrationRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(bindingResult.getFieldError().getDefaultMessage());
         }
