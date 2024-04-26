@@ -20,7 +20,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Menonaktifkan CSRF, umum untuk REST APIs
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/registration", "/api/v1/auth/login").permitAll()
+                        .requestMatchers("/api/v1/auth/registration", "/api/v1/auth/login").permitAll()
                         .anyRequest().authenticated()) // Memerlukan autentikasi untuk semua request
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // Stateless session untuk JWT
         // Menghapus konfigurasi httpBasic dan formLogin jika Anda menggunakan JWT

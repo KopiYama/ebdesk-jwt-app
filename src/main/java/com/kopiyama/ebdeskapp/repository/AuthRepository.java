@@ -1,11 +1,11 @@
-package com.kopiyama.ebdeskapp.service;
+package com.kopiyama.ebdeskapp.repository;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
-public class AuthService {
+public class AuthRepository {
 
     @Data
     @NoArgsConstructor
