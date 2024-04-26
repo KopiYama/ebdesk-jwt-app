@@ -1,4 +1,4 @@
-package com.kopiyama.ebdeskapp.data;
+package com.kopiyama.ebdeskapp.exception;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
-public class AuthData {
+public class ExceptionThrowError {
 
     @Data
     @NoArgsConstructor

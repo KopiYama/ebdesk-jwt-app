@@ -3,20 +3,18 @@ package com.kopiyama.ebdeskapp.controller;
 import com.kopiyama.ebdeskapp.jwt.JwtTokenProvider;
 import com.kopiyama.ebdeskapp.model.User;
 import com.kopiyama.ebdeskapp.repository.UserRepository;
-import com.kopiyama.ebdeskapp.data.AuthData;
+import com.kopiyama.ebdeskapp.exception.ExceptionThrowError;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -36,7 +34,7 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody AuthData.AuthRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@RequestBody ExceptionThrowError.AuthRequest loginRequest) {
         try {
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
@@ -44,14 +42,14 @@ public class UserController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenProvider.generateToken(authentication.getName());
 
-            return ResponseEntity.ok(new AuthData.AuthResponse(jwt));
+            return ResponseEntity.ok(new ExceptionThrowError.AuthResponse(jwt));
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body("Username or password is incorrect");
         }
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid AuthData.AuthRequest registrationRequest, BindingResult bindingResult) {
+    public ResponseEntity<?> registerUser(@RequestBody @Valid ExceptionThrowError.AuthRequest registrationRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(bindingResult.getFieldError().getDefaultMessage());
         }
@@ -66,6 +64,12 @@ public class UserController {
         user.setEmail(registrationRequest.getEmail());
         userRepository.save(user);
         return ResponseEntity.ok("User registered successfully");
+    }
+
+    @GetMapping("/resource")
+    @PreAuthorize("isAuthenticated()") // Ensure the user is authenticated
+    public ResponseEntity<String> getProtectedResource() {
+        return ResponseEntity.ok("Access to protected resource successful!");
     }
 
 }
